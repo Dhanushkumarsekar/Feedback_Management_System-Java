@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Feedback System</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(135deg, #0f172a, #1e293b, #020617);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            width: 380px;
+            color: white;
+            box-shadow: 0 0 40px rgba(0,0,0,0.4);
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            outline: none;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .stars {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 10px 0;
+        }
+
+        .stars i {
+            font-size: 25px;
+            cursor: pointer;
+            color: gray;
+            transition: 0.3s;
+        }
+
+        .stars i.active {
+            color: gold;
+            transform: scale(1.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        .admin-link {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .admin-link a {
+            color: #a5b4fc;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="glass-card">
+
+    <h2>Feedback Form</h2>
+
+    <form onsubmit="submitData(event)">
+
+        <div class="input-group">
+            <input type="text" name="name" placeholder="Enter your name" required>
+        </div>
+
+        <div class="input-group">
+            <input type="email" name="email" placeholder="Enter your email" required>
+        </div>
+
+
+        <div class="stars">
+            <i class="fa-solid fa-star" onclick="rate(1)"></i>
+            <i class="fa-solid fa-star" onclick="rate(2)"></i>
+            <i class="fa-solid fa-star" onclick="rate(3)"></i>
+            <i class="fa-solid fa-star" onclick="rate(4)"></i>
+            <i class="fa-solid fa-star" onclick="rate(5)"></i>
+        </div>
+
+        <input type="hidden" id="rating" value="1">
+
+        <div class="input-group">
+            <textarea id="comments" rows="3" placeholder="Write your feedback..."></textarea>
+        </div>
+
+        <button type="submit">Submit Feedback</button>
+
+    </form>
+
+    <div class="admin-link">
+        <a href="login.html"> Admin Login</a>
+    </div>
+
+</div>
+
+<script>
+function rate(n) {
+    document.getElementById("rating").value = n;
+
+    let stars = document.querySelectorAll(".stars i");
+    stars.forEach((star, index) => {
+        if(index < n){
+            star.classList.add("active");
+        } else {
+            star.classList.remove("active");
+        }
+    });
+}
+</script>
+<!-- API -->
+<script>
+function submitData(event) {
+    event.preventDefault();
+
+    fetch("http://localhost:8080/feedback", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name: document.getElementsByName("name")[0].value,
+            email: document.getElementsByName("email")[0].value,
+            rating: document.getElementById("rating").value,
+            comments: document.getElementById("comments").value
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert("Feedback Submitted ");
+        location.reload();
+    });
+}
+</script>
+
+</body>
+</html>
